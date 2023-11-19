@@ -1,0 +1,119 @@
+
+db.createCollection("Employee")
+
+
+db.Employee.insert([
+    {
+	"Emp_id":1,
+        "Name": { "FName": "John", "LName": "Doe" },
+        "Company_Name": "Infosys",
+        "Salary": 40000,
+        "Designation": "Programmer",
+        "Age": 28,
+        "Expertise": ["Java", "Python", "SQL"],
+        "DOB": "1995-01-15",
+        "Email_id": "john.doe@example.com",
+        "Contact": "9876543210",
+        "Address": [{ "PAddr": "123 Main St", "LAddr": "Apt 45" }]
+    },
+    {
+	"Emp_id":2,
+        "Name": { "FName": "Alice", "LName": "Smith" },
+        "Company_Name": "TCS",
+        "Salary": 35000,
+        "Designation": "Tester",
+        "Age": 25,
+        "Expertise": ["Testing", "Automation"],
+        "DOB": "1998-05-22",
+        "Email_id": "alice.smith@example.com",
+        "Contact": "8765432109",
+        "Address": [{ "PAddr": "456 Oak St", "LAddr": "Suite 12" }]
+    },
+    {
+	"Emp_id":3,
+        "Name": { "FName": "Bob", "LName": "Johnson" },
+        "Company_Name": "Infosys",
+        "Salary": 32000,
+        "Designation": "Programmer",
+        "Age": 30,
+        "Expertise": ["C++", "JavaScript", "Node.js"],
+        "DOB": "1992-08-10",
+        "Email_id": "bob.johnson@example.com",
+        "Contact": "7654321098",
+        "Address": [{ "PAddr": "789 Pine St", "LAddr": "Apt 8" }]
+    },
+    {
+	"Emp_id":4,
+        "Name": { "FName": "Eva", "LName": "White" },
+        "Company_Name": "TCS",
+        "Salary": 28000,
+        "Designation": "Tester",
+        "Age": 26,
+        "Expertise": ["Manual Testing", "Selenium"],
+        "DOB": "1997-03-18",
+        "Email_id": "eva.white@example.com",
+        "Contact": "6543210987",
+        "Address": [{ "PAddr": "101 Cedar St", "LAddr": "Unit 20" }]
+    },
+    {
+	"Emp_id":5,
+        "Name": { "FName": "Charlie", "LName": "Brown" },
+        "Company_Name": "Wipro",
+        "Salary": 42000,
+        "Designation": "Programmer",
+        "Age": 32,
+        "Expertise": ["Python", "Django", "MongoDB"],
+        "DOB": "1990-12-05",
+        "Email_id": "charlie.brown@example.com",
+        "Contact": "5432109876",
+        "Address": [{ "PAddr": "222 Maple St", "LAddr": "Floor 3" }]
+    }
+]);
+
+
+ 1. Creates a new document if no document in the employee collection contains {Designation: "Tester", Company_name: "TCS", Age: 25}
+-->db.Employee.update(
+  { 
+    "Designation": "Tester", 
+    "Company_Name": "TCS", 
+    "Age": 25 
+  }, 
+  { 
+    $setOnInsert: { 
+      "Emp_id": 3,
+      "Name": { "FName": "", "LName": "" }, 
+      "Salary": 0, 
+      "Expertise": [], 
+      "DOB": "", 
+      "Email_id": "", 
+      "Contact": "", 
+      "Address": [] 
+    } 
+  },
+  { 
+    upsert: true 
+  }
+)
+
+2. Finds all employees working with Company_name: "TCS" and increase their salary by 2000.
+-->db.Employee.update(
+  { "Company_Name": "TCS" },
+  { $inc: { "Salary": 2000 } },
+  { multi: true }
+)
+
+ 3. Matches all documents where the value of the field Address is an embedded document that contains only the field city with the value "Pune" and the field Pin_code with the value "411001".
+-->db.Employee.find({
+  "Address": { $elemMatch: { "City": "Pune", "Pin_code": "411001" } }
+})
+
+4. Find employee details who are working as "Developer" or "Tester".
+-->db.Employee.find({
+  "Designation": { $in: ["Developer", "Tester"] }
+})
+
+5. Drop Single documents where designation="Developer".
+-->db.Employee.deleteOne({ "Designation": "Developer" })
+
+6. Count number of documents in employee collection.
+-->db.Employee.countDocuments({})

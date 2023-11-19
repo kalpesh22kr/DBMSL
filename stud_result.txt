@@ -1,0 +1,51 @@
+create tables
+CREATE TABLE Stud_Marks (
+    Roll NUMBER PRIMARY KEY,
+    Name VARCHAR2(20),
+    total_marks NUMBER
+);
+
+CREATE TABLE Result (
+    Roll NUMBER PRIMARY KEY,
+    Name VARCHAR2(20),
+    Class VARCHAR2(20)
+);
+
+insert into stud_marks values(1,'Ganesh', 1200); 
+insert into stud_marks values(2,'Ram',950); 
+insert into stud_marks values(3,'Sai',850); 
+insert into stud_marks values(4, 'Laxman',800);
+
+-- Create the stored procedure
+CREATE OR REPLACE PROCEDURE proc_Grade (
+    p_roll IN NUMBER,
+    p_name IN VARCHAR2,
+    p_total_marks IN NUMBER
+) AS
+    v_class VARCHAR2(20);
+BEGIN
+    IF p_total_marks <= 1500 AND p_total_marks >= 990 THEN
+        v_class := 'Distinction';
+    ELSIF p_total_marks >= 900 AND p_total_marks <= 989 THEN
+        v_class := 'First Class';
+    ELSIF p_total_marks >= 825 AND p_total_marks <= 899 THEN
+        v_class := 'Higher Second Class';
+    ELSE
+        v_class := 'Not categorized';
+    END IF;
+
+    INSERT INTO Result (Roll, Name, Class)
+    VALUES (p_roll, p_name, v_class);
+END proc_Grade;
+
+/
+
+DECLARE
+    v_roll NUMBER :=3;
+    v_name VARCHAR2(20) :='Sai';
+    v_total_marks NUMBER :=850;
+BEGIN
+    -- Call the procedure
+    proc_Grade(v_roll, v_name, v_total_marks);
+END;
+/

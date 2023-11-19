@@ -1,0 +1,41 @@
+create table STUD(roll int, name char(20), attendance int,status varchar(20));
+insert into stud values(1,'Ganesh',75,'NA'); 
+insert into stud values(2,'Ramesh',95,'NA'); 
+insert into stud values(3,'Rajesh',65,'NA'); 
+insert into stud values(4,'Gajesh',44,'NA'); 
+insert into stud values(5,'Dinesh',36,'NA'); 
+
+
+
+
+DECLARE
+    v_roll_no NUMBER;
+    v_attendance NUMBER;
+    v_status VARCHAR2(20);
+    v_custom_exception EXCEPTION;
+    PRAGMA EXCEPTION_INIT(v_custom_exception, -20001);
+
+BEGIN
+    v_roll_no := &roll_no;
+    SELECT Attendance, Status INTO v_attendance, v_status
+    FROM Stud
+    WHERE Roll = v_roll_no;
+
+    -- Checking attendance percentage
+    IF v_attendance < 75 THEN
+        DBMS_OUTPUT.PUT_LINE('Term not granted. Attendance is less than 75%.');
+        UPDATE Stud SET Status = 'Detained' WHERE Roll = v_roll_no;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Term granted. Attendance is 75% or more.');
+        UPDATE Stud SET Status = 'Not Detained' WHERE Roll = v_roll_no;
+    END IF;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Roll number ' || v_roll_no || ' not found in the Stud table.');
+    WHEN v_custom_exception THEN
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/

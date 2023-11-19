@@ -1,0 +1,41 @@
+create table borrower(rollno int, name char(20), dateofissue date, nameofbook char(20), status char(10));
+create table fine(rollno int, fdate date, amt int);
+
+insert into borrower values(101,'Ram',to_date('20231101','YYYYMMDD'),'DBMS','I');
+insert into borrower values(102,'Sai',to_date('20231025','YYYYMMDD'),'CN','I');
+insert into borrower values(103,'Laxman',to_date('20231015','YYYYMMDD'),'TOC','I');
+insert into borrower values(104,'Sai',to_date('20231110','YYYYMMDD'),'SEPM','I');
+insert into borrower values(105,'Ganesh',to_date('20231116','YYYYMMDD'),'IEEE','I');
+
+select * from borrower
+SET SERVEROUT ON
+DECLARE
+    v_roll_no    NUMBER;
+    v_book_name  VARCHAR2(50);
+    v_issue_date DATE;
+    v_status     CHAR(1);
+    v_fine_amt   NUMBER;
+    v_days_diff  NUMBER;
+BEGIN
+    -- Accepting input from the user
+    v_roll_no := &roll_no;
+    v_book_name := '&book_name';
+    SELECT dateofissue into v_issue_date FROM borrower WHERE rollno=v_roll_no;
+    v_status := 'R';
+    v_days_diff := TRUNC(SYSDATE) - TRUNC(v_issue_date);
+
+    IF v_days_diff BETWEEN 15 AND 30 THEN
+        v_fine_amt := 5 * (v_days_diff - 14);
+    ELSIF v_days_diff > 30 THEN
+        v_fine_amt := 50 * (v_days_diff - 30);
+    ELSE
+        v_fine_amt := 0;
+    END IF;
+    v_status := 'R';
+
+    IF v_fine_amt > 0 THEN
+        INSERT INTO Fine (Rollno, fdate, Amt)
+        VALUES (v_roll_no, SYSDATE, v_fine_amt);
+    END IF;
+END;
+/

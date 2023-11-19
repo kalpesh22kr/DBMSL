@@ -1,0 +1,19 @@
+Create table Areas(Radius number(5), Area number(14,2));
+Select * from Areas;
+SET SERVEROUT ON
+Declare
+Pi constant number (4,2):=3.14;
+Radius number(5);
+Area number(14,2);
+
+Begin
+Radius:=5;
+While Radius <=9 Loop
+Area:= Pi*(Radius*Radius);
+insert into Areas values (Radius,Area);
+Radius:=Radius+1;
+end loop;
+end;
+/
+
+Select * from Areas;

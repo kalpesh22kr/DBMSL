@@ -1,0 +1,77 @@
+Employee(emp_id,employee_name,street,city)
+Works(employee_name,company_name,salary)
+Company(company_name,city)
+Manages(employee_name,manager_name)
+
+
+CREATE TABLE Employee (
+    emp_id INT PRIMARY KEY,
+    employee_name VARCHAR(255) NOT NULL,
+    street VARCHAR(255),
+    city VARCHAR(255)
+);
+
+CREATE TABLE Works (
+    employee_name VARCHAR(255) NOT NULL,
+    company_name VARCHAR(255) NOT NULL,
+    salary DECIMAL(10, 2),
+    PRIMARY KEY (employee_name, company_name),
+    FOREIGN KEY (employee_name) REFERENCES Employee(employee_name),
+    FOREIGN KEY (company_name) REFERENCES Company(company_name)
+);
+
+CREATE TABLE Company (
+    company_name VARCHAR(255) PRIMARY KEY,
+    city VARCHAR(255)
+);
+
+CREATE TABLE Manages (
+    employee_name VARCHAR(255) NOT NULL,
+    manager_name VARCHAR(255) NOT NULL,
+    PRIMARY KEY (employee_name),
+    FOREIGN KEY (employee_name) REFERENCES Employee(employee_name),
+    FOREIGN KEY (manager_name) REFERENCES Employee(employee_name)
+);
+
+5. Add Column Asset to Company table
+-->ALTER TABLE Company ADD COLUMN Asset DECIMAL(12, 2);
+
+9. Change name of table Manages to Management
+-->ALTER TABLE Manages RENAME TO Management;
+
+10. Create Simple and Unique index on employee table
+-->CREATE INDEX idx_employee_name ON Employee(employee_name) UNIQUE;
+
+11. Display index information
+-->SHOW INDEX FROM Employee;
+
+-- 1. Find the names of all employees who work for 'TCS'
+SELECT employee_name
+FROM Works
+WHERE company_name = 'TCS';
+
+-- 2. Find the names and company names of all employees sorted in ascending order of company name
+-- and descending order of employee names of that company
+SELECT employee_name, company_name
+FROM Works
+ORDER BY company_name ASC, employee_name DESC;
+
+-- 3. Change the city of the employee working with InfoSys to 'Bangalore'
+UPDATE Employee
+SET city = 'Bangalore'
+WHERE employee_name IN (SELECT employee_name FROM Works WHERE company_name = 'InfoSys');
+
+-- 4. Find the names, street address, and cities of residence for all employees who work for 'TechM' and earn more than $10,000
+SELECT e.employee_name, e.street, e.city
+FROM Employee e
+JOIN Works w ON e.employee_name = w.employee_name
+WHERE w.company_name = 'TechM' AND w.salary > 10000;
+
+-- 7. Find the names of all employees who earn more than the average salary of all employees of their company
+SELECT w.employee_name
+FROM Works w
+WHERE w.salary > (SELECT AVG(salary) FROM Works WHERE company_name = w.company_name);
+
+-- 8. Find the names, street address, and cities of residence for all employees who work for 'TechM' and earn more than $10,000
+-- (This query is the same as query 4, so it doesn't need to be repeated)
+

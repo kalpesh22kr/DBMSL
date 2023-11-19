@@ -1,0 +1,37 @@
+create table oldt(id number,name varchar(20));
+create table newt(id number,name varchar(20));
+
+
+insert into newt values(1,'kalpesh');
+insert into newt values(2,'shubham');
+insert into oldt values(1,'kalpesh');
+insert into oldt values(3,'omkar');
+
+
+
+DECLARE
+      roll_no number;
+      flag int(2);
+      cursor c_roll(roll_no number) is select *from oldt WHERE id not in(select id from newt where newt.id = oldt.id);
+      info newt%rowtype;
+BEGIN
+      roll_no := &roll_no;
+      flag := 0;
+      open c_roll(roll_no);
+      loop fetch c_roll into info; 
+      exit when c_roll%notfound;
+             if(info.id = roll_no) THEN insert into newt values(info.id,info.name);
+             flag:=1;
+             end if;
+      end loop;
+             IF(c_roll%rowcount =0 or flag =0)THEN dbms_output.put_line('you entered wrong roll no'); 
+             ELSE dbms_output.put_line('sucessfully added in new data');
+             END IF;
+      close c_roll;
+END;
+/
+
+
+
+
+select *from newt;

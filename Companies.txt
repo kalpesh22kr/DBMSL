@@ -1,0 +1,45 @@
+Consider following Relation: 
+Companies(comp_id, name, cost, year)
+Orders(comp_id, domain, quantity)
+Execute the following query:
+
+
+
+
+
+
+1. Find names, costs, domains and quantities for companies using 
+inner join.
+    --> select Companies.name,Companies.cost,Orders.domain, Orders.quantity from Companies inner join Orders on Companies.comp_id=Orders.comp_id;
+
+
+2. Find names, costs, domains and quantities for companies using 
+left outer join.
+    --> select Companies.name,Companies.cost,Orders.domain, Orders.quantity from Companies left join Orders on Companies.comp_id=Orders.comp_id;
+
+
+
+3. Find names, costs, domains and quantities for companies using 
+right outer join.
+    --> select Companies.name,Companies.cost,Orders.domain, Orders.quantity from Companies right join Orders on Companies.comp_id=Orders.comp_id;
+
+
+4. Find names, costs, domains and quantities for companies using 
+Union operator.
+    --> select name,cost from Companies union all select domain, quantity from Orders;
+
+5. Create View View1 by selecting both tables to show company 
+name and quantities.
+    --> create view view1 as select companies.name, orders.quantity from companies , orders where companies.comp_id=orders.comp_id;
+
+6. Create View View2 by selecting any two columns and perform 
+insert update delete operations.
+    -->create view view2 as select comp_id, name,cost from companies;
+    -->insert into view2 values(3,'RTTP',4300);
+    -->delete from view2 where comp_id=6;
+    --> delete from view2 where cost=1000;
+
+
+7. Display content of View1, View2.
+    -->select * from view1;
+       select * from view2;

@@ -1,0 +1,14 @@
+create database BANK;
+use BANK;
+create table Branch( branch_name varchar(30) primary key, branch_city varchar(50) NOT NULL, assets varchar(50) NOT NULL);
+create table Customer( cust_name varchar(90) primary key, cust_street varchar(100) not null,cust_city varchar(50) not null);
+create table Account ( acc_no INT primary key, branch_name varchar(55) NOT NULL,balance int NOT NULL check (balance>=2000), foreign key (branch_name) REFERENCES Branch (branch_name) on delete cascade);
+create table Depositor(cust_name varchar(90) not null, acc_no INT not null, foreign key (cust_name) references Customer(cust_name) on delete cascade, foreign key (acc_no) references Account(acc_no) on delete cascade);
+create table Loan(loan_no int primary key not null,branch_name varchar(55) not null, amt int not null,foreign key (branch_name) REFERENCES Branch (branch_name) on delete cascade);
+create table Borrower(cust_name varchar(90) not null, loan_no int not null,foreign key (cust_name) references Customer(cust_name) on delete cascade,foreign key (loan_no) references Loan(loan_no) on delete cascade);
+insert into Branch(branch_name,branch_city,assets) values ('wadia','pune','10000'), ('bund garden','pune','15000'),('yerwada','pune','12000'), ('aundh','pimpri','23000'), ('baner','pimpri','14000'), ('bhosari','pimpri','16000'), ('dighi','pune','14000'), ('akurdi','pune','30000'), ('nigadi','pune','19000'), ('ravet','pune','26000');
+insert into Customer (cust_name,cust_street,cust_city) values('sunil','hadapsar','pune'),('prasad','sangamwadi','pune'),('jayesh','katraj','pune'),('sushant','handewadi','pune'),('yash','swargate','pune'),('malasha','laxmi road','pune'),('janhavi','sinhagad road','pune'), ('aaryan','ravet','pimpri'),('kabir','camp','pimpri'),('kaushal','katraj','pimpri');
+insert into Account(acc_no,branch_name,balance) values ('1001','wadia','10000'),('1002','bund garden','100000'),('1003','yerwada','15000'),('1004','aundh','12000'),('1005','baner','15000'),('1006','bhosari','13000'),('1007','dighi','20000'),('1008','akurdi','30000'),('1009','nigadi','40000'),('1010','ravet','19000');
+insert into Depositor(cust_name,acc_no) values('sunil','1001'),('prasad','1002'),('jayesh','1003'),('sushant','1004'),('yash','1005'),('malasha','1006'),('janhavi','1007'),('aaryan','1008'),('kabir','1009'),('kaushal','1010');
+insert into Loan(loan_no,branch_name,amt) values ('2001','yerwada','52000'),('2002','aundh','5000'),('2003','baner','55000'),('2004','bhosari','100000'),('2005','dighi','90000'),('2006','akurdi','60000'),('2007','nigadi','50000'),('2008','ravet','15000');
+insert into Borrower (cust_name,loan_no) values ('jayesh','2001'),('sushant','2002'),('yash','2003'),('malasha','2004'),('janhavi','2005'),('aaryan','2006'),('kabir','2007'),('kaushal','2008');

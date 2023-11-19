@@ -1,0 +1,40 @@
+CREATE TABLE Emp(
+    Emp_no NUMBER PRIMARY KEY,
+    Emp_name VARCHAR2(50),
+    Emp_salary NUMBER
+);
+
+CREATE TABLE Tracking (
+    Emp_no NUMBER,
+    Emp_salary NUMBER,
+    Operation VARCHAR2(10), -- 'INSERT', 'UPDATE', or 'DELETE'
+    Tracking_Date DATE
+);
+
+-- Creating the after trigger
+CREATE OR REPLACE TRIGGER Emp_Trigger
+AFTER INSERT OR UPDATE OR DELETE
+ON Emp
+FOR EACH ROW
+DECLARE
+    v_operation VARCHAR2(10);
+BEGIN
+    -- Check if the salary is less than Rs. 50,000
+    IF :NEW.Emp_salary < 50000 THEN
+        -- Determine the operation type
+        IF INSERTING THEN
+            v_operation := 'INSERT';
+        ELSIF UPDATING THEN
+            v_operation := 'UPDATE';
+        ELSIF DELETING THEN
+            v_operation := 'DELETE';
+        END IF;
+
+        -- Store the new values in the Tracking table
+        INSERT INTO Tracking (Emp_no, Emp_salary, Operation, Tracking_Date)
+        VALUES (:NEW.Emp_no, :NEW.Emp_salary, v_operation, SYSDATE);
+
+        DBMS_OUTPUT.PUT_LINE('Trigger fired for ' || v_operation || ' operation. Salary less than Rs. 50,000.');
+    END IF;
+END Emp_Trigger;
+/

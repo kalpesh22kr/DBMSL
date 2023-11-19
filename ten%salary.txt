@@ -1,0 +1,40 @@
+-- Create the necessary tables if they don't exist
+CREATE TABLE emp (
+    emp_no NUMBER PRIMARY KEY,
+    salary NUMBER
+);
+
+CREATE TABLE increment_salary (
+    emp_no NUMBER,
+    new_salary NUMBER,
+    increment_date DATE
+);
+
+-- Sample data for emp table
+INSERT INTO emp VALUES (1, 50000);
+INSERT INTO emp VALUES (2, 60000);
+INSERT INTO emp VALUES (3, 45000);
+INSERT INTO emp VALUES (4, 70000);
+INSERT INTO emp VALUES (5, 55000);
+
+-- PL/SQL block to increase salary and maintain records
+DECLARE
+    v_avg_salary NUMBER;
+BEGIN
+    -- Calculate the average salary of the organization
+    SELECT AVG(salary) INTO v_avg_salary FROM emp;
+
+    -- Update salary for employees with salary less than average
+    FOR emp_rec IN (SELECT emp_no, salary FROM emp WHERE salary < v_avg_salary) LOOP
+        UPDATE emp
+        SET salary = emp_rec.salary + (0.1 * emp_rec.salary)
+        WHERE emp_no = emp_rec.emp_no;
+
+        -- Insert a record into the increment_salary table
+        INSERT INTO increment_salary VALUES (emp_rec.emp_no, emp_rec.salary + (0.1 * emp_rec.salary), SYSDATE);
+    END LOOP;
+
+    -- Commit the changes
+    COMMIT;
+END;
+/
