@@ -1,0 +1,75 @@
+-- Create tables with constraints
+CREATE TABLE Cust_Master (
+    Cust_no INT PRIMARY KEY,
+    Cust_name VARCHAR(255) NOT NULL,
+    Cust_addr VARCHAR(255)
+);
+
+CREATE TABLE Order (
+    Order_no INT PRIMARY KEY,
+    Cust_no INT,
+    Order_date DATE,
+    Qty_Ordered INT,
+    FOREIGN KEY (Cust_no) REFERENCES Cust_Master(Cust_no)
+);
+
+CREATE TABLE Product (
+    Product_no INT PRIMARY KEY,
+    Product_name VARCHAR(255),
+    Order_no INT,
+    FOREIGN KEY (Order_no) REFERENCES Order(Order_no)
+);
+
+-- Insert records
+INSERT INTO Cust_Master VALUES (1001, 'John Doe', '123 Main St');
+INSERT INTO Cust_Master VALUES (1002, 'Alice Smith', '456 Oak St');
+INSERT INTO Cust_Master VALUES (1003, 'Bob Johnson', '789 Pine St');
+
+INSERT INTO Order VALUES (5001, 1001, '2023-01-15', 3);
+INSERT INTO Order VALUES (5002, 1002, '2023-01-16', 5);
+INSERT INTO Order VALUES (5003, 1003, '2023-01-17', 2);
+
+INSERT INTO Product VALUES (7001, 'Widget', 5001);
+INSERT INTO Product VALUES (7002, 'Gadget', 5002);
+INSERT INTO Product VALUES (7003, 'Doodad', 5003);
+
+-- Queries
+-- 1. List names of customers having 'A' as the second letter in their name.
+SELECT Cust_name
+FROM Cust_Master
+WHERE SUBSTRING(Cust_name, 2, 1) = 'A';
+
+-- 2. Display order from Customer no C1002, C1005, C1007, and C1008.
+SELECT O.Order_no, O.Cust_no, O.Order_date, O.Qty_Ordered
+FROM Order O
+WHERE O.Cust_no IN (1002, 1005, 1007, 1008);
+
+-- 3. List clients who stay in either 'Banglore or 'Manglore'.
+SELECT C.Cust_name
+FROM Cust_Master C
+WHERE C.Cust_addr LIKE '%Banglore%' OR C.Cust_addr LIKE '%Manglore%';
+
+-- 4. Display name of customers & the product_name they have purchased.
+SELECT C.Cust_name, P.Product_name
+FROM Cust_Master C
+JOIN Order O ON C.Cust_no = O.Cust_no
+JOIN Product P ON O.Order_no = P.Order_no;
+
+-- 5. Create view View1 consisting of Cust_name, Product_name.
+CREATE VIEW View1 AS
+SELECT C.Cust_name, P.Product_name
+FROM Cust_Master C
+JOIN Order O ON C.Cust_no = O.Cust_no
+JOIN Product P ON O.Order_no = P.Order_no;
+
+-- 6. Display product_name and quantity purchased by each customer.
+SELECT C.Cust_name, P.Product_name, O.Qty_Ordered
+FROM Cust_Master C
+JOIN Order O ON C.Cust_no = O.Cust_no
+JOIN Product P ON O.Order_no = P.Order_no;
+
+-- 7. Perform different joint operations.
+-- Example: INNER JOIN
+SELECT C.Cust_name, O.Order_no
+FROM Cust_Master C
+INNER JOIN Order O ON C.Cust_no = O.Cust_no;

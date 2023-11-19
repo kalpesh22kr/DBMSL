@@ -1,0 +1,59 @@
+-- Create tables with constraints
+CREATE TABLE CUSTOMERS (
+    CNo INT PRIMARY KEY,
+    Cname VARCHAR(255),
+    Ccity VARCHAR(255),
+    CMobile VARCHAR(20)
+);
+
+CREATE TABLE ITEMS (
+    INo INT PRIMARY KEY,
+    Iname VARCHAR(255),
+    Itype VARCHAR(255),
+    Iprice DECIMAL(15, 2),
+    Icount INT
+);
+
+CREATE TABLE PURCHASE (
+    PNo INT PRIMARY KEY,
+    Pdate DATE,
+    Pquantity INT,
+    Cno INT,
+    INo INT,
+    FOREIGN KEY (Cno) REFERENCES CUSTOMERS(CNo),
+    FOREIGN KEY (INo) REFERENCES ITEMS(INo)
+);
+
+-- Insert data into tables
+-- Add data as needed
+
+-- Queries
+-- 1. List all stationary items with a price between 400/- to 1000/-
+SELECT * FROM ITEMS WHERE Itype = 'Stationary' AND Iprice BETWEEN 400 AND 1000;
+
+-- 2. Change the mobile number of customer “Gopal”
+UPDATE CUSTOMERS SET CMobile = '<new_mobile_number>' WHERE Cname = 'Gopal';
+
+-- 3. Display the item with the maximum price
+SELECT * FROM ITEMS WHERE Iprice = (SELECT MAX(Iprice) FROM ITEMS);
+
+-- 4. Display all purchases sorted from the most recent to the oldest
+SELECT * FROM PURCHASE ORDER BY Pdate DESC;
+
+-- 5. Count the number of customers in every city
+SELECT Ccity, COUNT(*) AS customer_count FROM CUSTOMERS GROUP BY Ccity;
+
+-- 6. Display all purchased quantity of Customer Maya
+SELECT P.Pquantity, I.Iname
+FROM PURCHASE P
+JOIN CUSTOMERS C ON P.Cno = C.CNo
+JOIN ITEMS I ON P.INo = I.INo
+WHERE C.Cname = 'Maya';
+
+-- 7. Create a view that shows Iname, Price, and Count of all stationary items
+-- in descending order of price.
+CREATE VIEW StationaryView AS
+SELECT Iname, Iprice, Icount
+FROM ITEMS
+WHERE Itype = 'Stationary'
+ORDER BY Iprice DESC;
