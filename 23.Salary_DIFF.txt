@@ -1,0 +1,49 @@
+-- Create the CUSTOMERS table
+CREATE TABLE CUSTOMERS (
+    ID NUMBER,
+    NAME VARCHAR2(100),
+    SALARY NUMBER
+);
+
+-- Create the trigger
+CREATE OR REPLACE TRIGGER salary_difference_trigger
+BEFORE INSERT OR UPDATE OR DELETE
+ON CUSTOMERS
+FOR EACH ROW
+DECLARE
+    v_old_salary NUMBER;
+    v_new_salary NUMBER;
+BEGIN
+    -- For UPDATE and DELETE operations, capture the old salary value
+    IF UPDATING OR DELETING THEN
+        v_old_salary := :OLD.SALARY;
+    END IF;
+
+    -- For INSERT and UPDATE operations, capture the new salary value
+    IF INSERTING OR UPDATING THEN
+        v_new_salary := :NEW.SALARY;
+    END IF;
+
+    -- Display the salary difference
+    IF v_old_salary IS NOT NULL AND v_new_salary IS NOT NULL THEN
+        DBMS_OUTPUT.PUT_LINE('Salary Difference: ' || (v_new_salary - v_old_salary));
+    ELSIF v_new_salary IS NOT NULL THEN
+        DBMS_OUTPUT.PUT_LINE('Salary Set: ' || v_new_salary);
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Salary Deleted');
+    END IF;
+END;
+/
+
+-- Enable DBMS_OUTPUT
+SET SERVEROUTPUT ON;
+
+-- Test the trigger with INSERT, UPDATE, or DELETE operations
+-- Example INSERT:
+-- INSERT INTO CUSTOMERS (ID, NAME, SALARY) VALUES (1, 'John Doe', 50000);
+
+-- Example UPDATE:
+-- UPDATE CUSTOMERS SET SALARY = 40000 WHERE ID = 1;
+
+-- Example DELETE:
+-- DELETE FROM CUSTOMERS WHERE ID = 1;
